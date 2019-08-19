@@ -20,11 +20,25 @@ docker run --rm \
 
 Run `iotedged` inside container with custom configuration file 
 ```
+# clone iotedge repository
+git clone https://github.com/Azure/iotedge.git
+
+# create a folder that will be a home folder for iotedge
+mkdir -p iotedged/home
+
+# copy config file to iotedged folder
+cp iotedge/edgelet/contrib/config/linux/config.yaml iotedged/config.yaml
+
+# run iotedged
+cd iotedge/edgelet
+
 docker run --rm \
+  -v /var/run/docker.sock:/var/run/docker.sock \
   -v cargo-git:/root/.cargo/git \
   -v cargo-registry:/root/.cargo/registry \
   -v $PWD:/edgelet \
-  -v $PWD/../../iotedged-config/config.yaml:/etc/iotedge/config.yaml \
+  -v $PWD/../../iotedged/config.yaml:/etc/iotedge/config.yaml \
+  -v $PWD/../../iotedged/home:/var/lib/iotedge \
   -w /edgelet/iotedged \
   dmolokanov/edgelet-build \
   cargo run -- -c /etc/iotedge/config.yaml
